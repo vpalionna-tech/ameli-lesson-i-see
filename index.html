@@ -1,0 +1,968 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super English (6 років) 🚀</title>
+    <!-- Підключення Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Підключення шрифту Nunito -->
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Підключення Canvas Confetti для святкової анімації -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #F5F3FF 0%, #EFF6FF 50%, #FFFBEB 100%);
+            min-height: 100vh;
+            user-select: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* М'які об'ємні кнопки для дітей */
+        .kid-btn {
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 5px 0 rgba(0, 0, 0, 0.1);
+        }
+        .kid-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        /* М'яке похитування при помилці */
+        @keyframes gentleWobble {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-3deg); }
+            75% { transform: rotate(3deg); }
+        }
+        .wobble-hint {
+            animation: gentleWobble 0.4s ease-in-out;
+            border-color: #FBBF24 !important;
+            background-color: #FEF3C7 !important;
+        }
+
+        /* Пульсація підказки */
+        @keyframes softPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.5); }
+            50% { transform: scale(1.03); box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+        }
+        .pulse-guide {
+            animation: softPulse 1.6s infinite;
+        }
+
+        /* Анімація появи */
+        @keyframes popIn {
+            0% { opacity: 0; transform: scale(0.9); }
+            100% { opacity: 1; transform: scale(1); }
+        }
+        .pop-in {
+            animation: popIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Кольорові стилі карток */
+        .swatch-red { background-color: #FEE2E2; border-color: #F87171; color: #991B1B; }
+        .swatch-pink { background-color: #FCE7F3; border-color: #F472B6; color: #9D174D; }
+        .swatch-grey { background-color: #F3F4F6; border-color: #9CA3AF; color: #374151; }
+        .swatch-purple { background-color: #F3E8FF; border-color: #C084FC; color: #6B21A8; }
+        .swatch-brown { background-color: #FEF3C7; border-color: #B45309; color: #78350F; }
+        .swatch-green { background-color: #DCFCE7; border-color: #4ADE80; color: #166534; }
+        .swatch-yellow { background-color: #FEF9C3; border-color: #FACC15; color: #854D0E; }
+        .swatch-blue { background-color: #DBEAFE; border-color: #60A5FA; color: #1E40AF; }
+        .swatch-orange { background-color: #FFEDD5; border-color: #FB923C; color: #9A3412; }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col justify-between">
+
+    <!-- ВЕРХНЯ ПАНЕЛЬ (У стилі Super English з урахуванням попереднього уроку) -->
+    <header class="max-w-5xl w-full mx-auto px-4 pt-4">
+        <div class="bg-white rounded-3xl shadow-md border-2 border-indigo-100 p-4 sm:p-5">
+            <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+                <!-- Заголовок -->
+                <div class="flex items-center gap-3">
+                    <span class="text-4xl sm:text-5xl">🚀</span>
+                    <div>
+                        <h1 class="text-2xl sm:text-3xl font-black text-indigo-600 leading-tight">Super English (6 років)</h1>
+                        <p class="text-xs sm:text-sm font-bold text-slate-400">Повторення (Привітання • Have got) + Нове (I see... • Іграшки)</p>
+                    </div>
+                </div>
+
+                <!-- Зірочки -->
+                <div class="bg-amber-50 border-2 border-amber-300 px-5 py-2 rounded-2xl flex items-center gap-2 shadow-sm">
+                    <span class="text-2xl sm:text-3xl">⭐</span>
+                    <span id="star-count" class="text-2xl font-black text-amber-600">0</span>
+                </div>
+            </div>
+
+            <!-- 4 Етапи навігації (поєднання старого формату та нових ігор) -->
+            <nav class="grid grid-cols-2 sm:grid-cols-4 gap-2 bg-slate-50 p-2 rounded-2xl border border-slate-100">
+                <button onclick="switchStage(1)" id="nav-stage-1" class="stage-tab py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5">
+                    <span>1. Повторення + Нові слова</span>
+                </button>
+                <button onclick="switchStage(2)" id="nav-stage-2" class="stage-tab py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5">
+                    <span>2. Правило I see / Have got</span>
+                </button>
+                <button onclick="switchStage(3)" id="nav-stage-3" class="stage-tab py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5">
+                    <span>3. Колесо слів 🎡</span>
+                </button>
+                <button onclick="switchStage(4)" id="nav-stage-4" class="stage-tab py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm transition-all flex items-center justify-center gap-1.5">
+                    <span>4. Склади речення 🧩</span>
+                </button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- ОСНОВНИЙ ІГРОВИЙ КОНТЕЙНЕР -->
+    <main id="app-container" class="flex-grow max-w-5xl w-full mx-auto px-4 py-6 flex flex-col items-center justify-start">
+        <!-- Контент рендериться динамічно -->
+    </main>
+
+    <!-- М'ЯКЕ ПОВІДОМЛЕННЯ-ПІДКАЗКА -->
+    <div id="feedback-toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 pointer-events-none transition-all duration-300 opacity-0 translate-y-4">
+        <div id="feedback-box" class="px-6 py-3 rounded-full shadow-xl border-4 font-black text-xl sm:text-2xl flex items-center gap-3 bg-white">
+            <span id="feedback-emoji">🌟</span>
+            <span id="feedback-text">Awesome!</span>
+        </div>
+    </div>
+
+    <!-- НИЖНІЙ КОЛОНТИТУЛ -->
+    <footer class="text-center py-3 text-xs sm:text-sm font-bold text-slate-400">
+        💡 Натискай на картки, щоб почути вимову 🔊 За кожну правильну відповідь отримуй зірочку ⭐
+    </footer>
+
+    <script>
+        /* ==========================================================================
+           1. БАЗА ЗНАНЬ: ПОВТОРЕННЯ З ПОПЕРЕДНЬОГО УРОКУ + НОВІ СЛОВА (6 РОКІВ)
+           ========================================================================== */
+        const GREETINGS = [
+            { en: 'Hello!', ua: 'Привіт!', emoji: '👋', bg: 'bg-pink-50 border-pink-200' },
+            { en: 'Good morning!', ua: 'Доброго ранку!', emoji: '🌅', bg: 'bg-amber-50 border-amber-200' },
+            { en: 'Good afternoon!', ua: 'Добрий день!', emoji: '☀️', bg: 'bg-yellow-50 border-yellow-200' },
+            { en: 'Good evening!', ua: 'Добрий вечір!', emoji: '🌆', bg: 'bg-orange-50 border-orange-200' },
+            { en: 'Good night!', ua: 'На добраніч!', emoji: '🌙', bg: 'bg-indigo-50 border-indigo-200' },
+            { en: 'How are you?', ua: 'Як справи?', emoji: '😊', bg: 'bg-emerald-50 border-emerald-200' },
+            { en: 'I am fine!', ua: 'У мене все добре!', emoji: '👍', bg: 'bg-sky-50 border-sky-200' },
+            { en: 'Goodbye!', ua: 'Бувай!', emoji: '🙋‍♂️', bg: 'bg-purple-50 border-purple-200' }
+        ];
+
+        const COLORS = [
+            { en: 'red', swatch: 'swatch-red', emoji: '🔴', ua: 'червоний' },
+            { en: 'pink', swatch: 'swatch-pink', emoji: '🩷', ua: 'рожевий' },
+            { en: 'grey', swatch: 'swatch-grey', emoji: '🩶', ua: 'сірий' },
+            { en: 'purple', swatch: 'swatch-purple', emoji: '🟣', ua: 'фіолетовий' },
+            { en: 'brown', swatch: 'swatch-brown', emoji: '🟤', ua: 'коричневий' },
+            { en: 'green', swatch: 'swatch-green', emoji: '🟢', ua: 'зелений' },
+            { en: 'yellow', swatch: 'swatch-yellow', emoji: '🟡', ua: 'жовтий' },
+            { en: 'blue', swatch: 'swatch-blue', emoji: '🔵', ua: 'синій' },
+            { en: 'orange', swatch: 'swatch-orange', emoji: '🟠', ua: 'помаранчевий' }
+        ];
+
+        const NUMBERS = [
+            { num: 1, en: 'one' }, { num: 2, en: 'two' }, { num: 3, en: 'three' },
+            { num: 4, en: 'four' }, { num: 5, en: 'five' }, { num: 6, en: 'six' },
+            { num: 7, en: 'seven' }, { num: 8, en: 'eight' }, { num: 9, en: 'nine' },
+            { num: 10, en: 'ten' }
+        ];
+
+        const ANIMALS = [
+            { en: 'pig', plural: 'pigs', emoji: '🐷', ua: 'свинка' },
+            { en: 'cat', plural: 'cats', emoji: '🐱', ua: 'котик' },
+            { en: 'dog', plural: 'dogs', emoji: '🐶', ua: 'песик' },
+            { en: 'wolf', plural: 'wolves', emoji: '🐺', ua: 'вовк' },
+            { en: 'fox', plural: 'foxes', emoji: '🦊', ua: 'лисичка' },
+            { en: 'bird', plural: 'birds', emoji: '🐦', ua: 'пташка' },
+            { en: 'rabbit', plural: 'rabbits', emoji: '🐰', ua: 'кролик' },
+            { en: 'mouse', plural: 'mice', emoji: '🐭', ua: 'мишка' },
+            { en: 'bear', plural: 'bears', emoji: '🐻', ua: 'ведмедик' },
+            { en: 'duck', plural: 'ducks', emoji: '🦆', ua: 'качечка' }
+        ];
+
+        // НОВА ТЕМА: Іграшки та природа (Toys & Nature)
+        const NEW_WORDS = [
+            { en: 'ball', plural: 'balls', emoji: '⚽', ua: "м'яч", bg: 'bg-sky-50 border-sky-300' },
+            { en: 'car', plural: 'cars', emoji: '🚗', ua: 'машинка', bg: 'bg-rose-50 border-rose-300' },
+            { en: 'doll', plural: 'dolls', emoji: '🪆', ua: 'лялька', bg: 'bg-pink-50 border-pink-300' },
+            { en: 'star', plural: 'stars', emoji: '⭐', ua: 'зірочка', bg: 'bg-amber-50 border-amber-300' },
+            { en: 'tree', plural: 'trees', emoji: '🌳', ua: 'дерево', bg: 'bg-emerald-50 border-emerald-300' },
+            { en: 'sun', plural: 'suns', emoji: '☀️', ua: 'сонечко', bg: 'bg-yellow-50 border-yellow-300' }
+        ];
+
+        /* ==========================================================================
+           2. СТАН ДОДАТКУ
+           ========================================================================== */
+        const state = {
+            stars: 0,
+            currentStage: 1,
+            // Вкладка в Етапі 1 (Як на скріншоті: Привітання, Тварини, Кольори, Цифри + Нове!)
+            stage1SubTab: 'new', // 'greetings' | 'animals' | 'colors' | 'numbers' | 'new'
+            
+            // Етап 2: Правило I see / Have got (Комбо-практика)
+            stage2Index: 0,
+            stage2Tasks: [],
+
+            // Етап 3: Колесо слів 🎡
+            wheelRotation: 0,
+            isSpinning: false,
+            wheelTargetWord: null,
+            wheelSpinsDone: 0,
+
+            // Етап 4: Склади речення (Конструктор "I see..." та "I have got...")
+            stage4Index: 0,
+            stage4BuiltWords: [],
+            stage4Tasks: []
+        };
+
+        /* ==========================================================================
+           3. ОЗВУЧКА (SpeechSynthesis) ТА М'ЯКІ ЗВУКИ
+           ========================================================================== */
+        function speak(text, rate = 0.88) {
+            if (!('speechSynthesis' in window)) return;
+            window.speechSynthesis.cancel();
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = rate;
+            utterance.pitch = 1.1;
+
+            const voices = window.speechSynthesis.getVoices();
+            const preferred = voices.find(v => v.lang.includes('en') && (v.name.includes('Google') || v.name.includes('Samantha') || v.name.includes('Female')));
+            if (preferred) utterance.voice = preferred;
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        function playGentleSound(type) {
+            try {
+                if (audioCtx.state === 'suspended') audioCtx.resume();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                const now = audioCtx.currentTime;
+
+                if (type === 'success') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, now);
+                    osc.frequency.setValueAtTime(659.25, now + 0.1);
+                    osc.frequency.setValueAtTime(783.99, now + 0.2);
+                    gain.gain.setValueAtTime(0.15, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+                    osc.start(now);
+                    osc.stop(now + 0.45);
+                } else if (type === 'tap') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(480, now);
+                    gain.gain.setValueAtTime(0.07, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+                    osc.start(now);
+                    osc.stop(now + 0.07);
+                } else if (type === 'spin') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(300, now);
+                    osc.frequency.exponentialRampToValueAtTime(600, now + 0.25);
+                    gain.gain.setValueAtTime(0.08, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+                    osc.start(now);
+                    osc.stop(now + 0.25);
+                } else if (type === 'tryAgain') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(320, now);
+                    osc.frequency.setValueAtTime(280, now + 0.12);
+                    gain.gain.setValueAtTime(0.1, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+                    osc.start(now);
+                    osc.stop(now + 0.3);
+                }
+            } catch (e) {}
+        }
+
+        function addStar(amount = 1) {
+            state.stars += amount;
+            const el = document.getElementById('star-count');
+            el.textContent = state.stars;
+            el.parentElement.classList.add('scale-110');
+            setTimeout(() => el.parentElement.classList.remove('scale-110'), 250);
+        }
+
+        function celebrate(big = false) {
+            playGentleSound('success');
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: big ? 110 : 35,
+                    spread: big ? 95 : 60,
+                    origin: { y: 0.65 }
+                });
+            }
+        }
+
+        let toastTimeout;
+        function showFeedback(isSuccess, customText = null) {
+            const toast = document.getElementById('feedback-toast');
+            const box = document.getElementById('feedback-box');
+            const emoji = document.getElementById('feedback-emoji');
+            const text = document.getElementById('feedback-text');
+
+            clearTimeout(toastTimeout);
+
+            if (isSuccess) {
+                const praises = ["Awesome job!", "Super!", "Great!", "You did it!", "Yay! Correct!"];
+                box.className = "px-6 py-3 rounded-full shadow-xl border-4 font-black text-xl sm:text-2xl flex items-center gap-3 bg-emerald-50 border-emerald-400 text-emerald-700";
+                emoji.textContent = "⭐";
+                text.textContent = customText || praises[Math.floor(Math.random() * praises.length)];
+            } else {
+                box.className = "px-6 py-3 rounded-full shadow-xl border-4 font-black text-xl sm:text-2xl flex items-center gap-3 bg-amber-50 border-amber-400 text-amber-800";
+                emoji.textContent = "💡";
+                text.textContent = customText || "Try again! Listen 🔊";
+            }
+
+            toast.classList.remove('opacity-0', 'translate-y-4');
+            toastTimeout = setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-4');
+            }, 1800);
+        }
+
+        function shuffle(arr) {
+            return [...arr].sort(() => Math.random() - 0.5);
+        }
+
+        /* ==========================================================================
+           4. ІНІЦІАЛІЗАЦІЯ ЗАВДАНЬ
+           ========================================================================== */
+        function initTasks() {
+            // Етап 2: Поєднання старого ("I have got...") та нового ("I see..." + кількість + колір + предмет)
+            state.stage2Tasks = [
+                {
+                    badge: 'Нова фраза: I see...',
+                    promptUa: 'Послухай фразу та обери правильну картку:',
+                    speech: 'I see a brown bear.',
+                    options: shuffle([
+                        { label: 'brown bear', count: 1, emoji: '🐻', swatch: 'swatch-brown', correct: true },
+                        { label: 'pink pig', count: 1, emoji: '🐷', swatch: 'swatch-pink', correct: false },
+                        { label: 'grey mouse', count: 1, emoji: '🐭', swatch: 'swatch-grey', correct: false }
+                    ])
+                },
+                {
+                    badge: 'Повторення: I have got...',
+                    promptUa: 'Послухай, що у мене є (I have got...):',
+                    speech: 'I have got a blue ball.',
+                    options: shuffle([
+                        { label: 'blue ball', count: 1, emoji: '⚽', swatch: 'swatch-blue', correct: true },
+                        { label: 'yellow star', count: 1, emoji: '⭐', swatch: 'swatch-yellow', correct: false },
+                        { label: 'red car', count: 1, emoji: '🚗', swatch: 'swatch-red', correct: false }
+                    ])
+                },
+                {
+                    badge: 'Комбо: Цифра + Колір + Тварина',
+                    promptUa: 'Послухай та порахуй! Скільки їх?',
+                    speech: 'three orange foxes',
+                    options: shuffle([
+                        { label: 'orange foxes', count: 3, emoji: '🦊', swatch: 'swatch-orange', correct: true },
+                        { label: 'orange foxes', count: 2, emoji: '🦊', swatch: 'swatch-orange', correct: false },
+                        { label: 'grey wolves', count: 3, emoji: '🐺', swatch: 'swatch-grey', correct: false }
+                    ])
+                },
+                {
+                    badge: 'Нова фраза: I see...',
+                    promptUa: 'Послухай і знайди картинку:',
+                    speech: 'I see a yellow star.',
+                    options: shuffle([
+                        { label: 'yellow star', count: 1, emoji: '⭐', swatch: 'swatch-yellow', correct: true },
+                        { label: 'green tree', count: 1, emoji: '🌳', swatch: 'swatch-green', correct: false },
+                        { label: 'purple doll', count: 1, emoji: '🪆', swatch: 'swatch-purple', correct: false }
+                    ])
+                },
+                {
+                    badge: 'Комбо: Привітання + Настрій',
+                    promptUa: 'Коли ми прокидаємося вранці, ми кажемо:',
+                    speech: 'Good morning!',
+                    options: shuffle([
+                        { label: 'Good morning!', count: 1, emoji: '🌅', swatch: 'swatch-yellow', correct: true },
+                        { label: 'Good night!', count: 1, emoji: '🌙', swatch: 'swatch-blue', correct: false },
+                        { label: 'Goodbye!', count: 1, emoji: '🙋‍♂️', swatch: 'swatch-purple', correct: false }
+                    ])
+                },
+                {
+                    badge: 'Нова фраза: I see...',
+                    promptUa: 'Послухай уважно: кого ми бачимо?',
+                    speech: 'I see a pink pig.',
+                    options: shuffle([
+                        { label: 'pink pig', count: 1, emoji: '🐷', swatch: 'swatch-pink', correct: true },
+                        { label: 'brown bear', count: 1, emoji: '🐻', swatch: 'swatch-brown', correct: false },
+                        { label: 'yellow duck', count: 1, emoji: '🦆', swatch: 'swatch-yellow', correct: false }
+                    ])
+                }
+            ];
+
+            // Етап 4: Склади речення (Конструктор фраз: поєднання I see... та I have got...)
+            state.stage4Tasks = [
+                {
+                    target: ['I see', 'a', 'brown', 'bear'],
+                    fullSpeech: 'I see a brown bear.',
+                    emoji: '🐻',
+                    swatch: 'swatch-brown',
+                    distractors: ['pink', 'ball', 'yellow']
+                },
+                {
+                    target: ['I see', 'a', 'pink', 'pig'],
+                    fullSpeech: 'I see a pink pig.',
+                    emoji: '🐷',
+                    swatch: 'swatch-pink',
+                    distractors: ['grey', 'star', 'blue']
+                },
+                {
+                    target: ['I have got', 'a', 'blue', 'ball'],
+                    fullSpeech: 'I have got a blue ball.',
+                    emoji: '⚽',
+                    swatch: 'swatch-blue',
+                    distractors: ['I see', 'red', 'fox']
+                },
+                {
+                    target: ['I see', 'an', 'orange', 'fox'],
+                    fullSpeech: 'I see an orange fox.',
+                    emoji: '🦊',
+                    swatch: 'swatch-orange',
+                    distractors: ['a', 'green', 'car']
+                },
+                {
+                    target: ['I see', 'a', 'yellow', 'star'],
+                    fullSpeech: 'I see a yellow star.',
+                    emoji: '⭐',
+                    swatch: 'swatch-yellow',
+                    distractors: ['purple', 'mouse', 'tree']
+                },
+                {
+                    target: ['I have got', 'a', 'red', 'car'],
+                    fullSpeech: 'I have got a red car.',
+                    emoji: '🚗',
+                    swatch: 'swatch-red',
+                    distractors: ['I see', 'brown', 'doll']
+                }
+            ];
+        }
+
+        /* ==========================================================================
+           5. НАВІГАЦІЯ МІЖ 4 ЕТАПАМИ
+           ========================================================================== */
+        function switchStage(stageNum) {
+            playGentleSound('tap');
+            state.currentStage = stageNum;
+            updateNavUI();
+            renderCurrentStage();
+        }
+
+        function updateNavUI() {
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`nav-stage-${i}`);
+                if (i === state.currentStage) {
+                    btn.className = "stage-tab py-2.5 px-3 rounded-xl font-black text-xs sm:text-sm bg-indigo-600 text-white shadow-md transition-all flex items-center justify-center gap-1.5";
+                } else {
+                    btn.className = "stage-tab py-2.5 px-3 rounded-xl font-extrabold text-xs sm:text-sm bg-transparent hover:bg-white text-slate-500 transition-all flex items-center justify-center gap-1.5";
+                }
+            }
+        }
+
+        function renderCurrentStage() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = '';
+
+            if (state.currentStage === 1) renderStage1(container);
+            else if (state.currentStage === 2) renderStage2(container);
+            else if (state.currentStage === 3) renderStage3Wheel(container);
+            else if (state.currentStage === 4) renderStage4Builder(container);
+            else if (state.currentStage === 5) renderVictory(container);
+        }
+
+        /* ==========================================================================
+           6. ЕТАП 1: КАРТКИ СЛІВ (Точно як на скріншоті + Нова категорія!)
+           ========================================================================== */
+        function renderStage1(container) {
+            const subTabs = [
+                { id: 'new', label: '✨ Нове: Іграшки та природа' },
+                { id: 'greetings', label: '👋 Привітання' },
+                { id: 'animals', label: '🦊 Тварини' },
+                { id: 'colors', label: '🎨 Кольори' },
+                { id: 'numbers', label: '🔢 Цифри (1–10)' }
+            ];
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "w-full flex flex-col items-center pop-in";
+
+            // Панель підкатегорій (овальна біла капсула як на скріншоті)
+            const pillBar = document.createElement('div');
+            pillBar.className = "bg-white rounded-full shadow-sm border border-slate-200 p-2 flex flex-wrap justify-center gap-2 mb-6";
+
+            subTabs.forEach(tab => {
+                const isActive = state.stage1SubTab === tab.id;
+                const btn = document.createElement('button');
+                btn.className = `px-4 py-2 rounded-full font-extrabold text-xs sm:text-sm transition-all ${
+                    isActive 
+                    ? 'bg-pink-500 text-white shadow-md scale-105' 
+                    : 'bg-slate-50 hover:bg-slate-100 text-slate-600'
+                }`;
+                btn.textContent = tab.label;
+                btn.onclick = () => {
+                    playGentleSound('tap');
+                    state.stage1SubTab = tab.id;
+                    renderCurrentStage();
+                };
+                pillBar.appendChild(btn);
+            });
+
+            wrapper.appendChild(pillBar);
+
+            // Сітка карток (4 колонки на ПК, 2 на мобільному — як на скріншоті)
+            const grid = document.createElement('div');
+            grid.className = "grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4 w-full";
+
+            if (state.stage1SubTab === 'new') {
+                NEW_WORDS.forEach(item => {
+                    grid.appendChild(createWordCard(item.emoji, item.en, `${item.ua} (Нове слово!)`, item.bg));
+                });
+            } else if (state.stage1SubTab === 'greetings') {
+                GREETINGS.forEach(item => {
+                    grid.appendChild(createWordCard(item.emoji, item.en, item.ua, item.bg));
+                });
+            } else if (state.stage1SubTab === 'animals') {
+                ANIMALS.forEach(item => {
+                    grid.appendChild(createWordCard(item.emoji, item.en, item.ua, 'bg-amber-50 border-amber-200'));
+                });
+            } else if (state.stage1SubTab === 'colors') {
+                COLORS.forEach(item => {
+                    grid.appendChild(createWordCard(item.emoji, item.en, item.ua, item.swatch));
+                });
+            } else if (state.stage1SubTab === 'numbers') {
+                grid.className = "grid grid-cols-2 sm:grid-cols-5 gap-4 w-full";
+                NUMBERS.forEach(item => {
+                    grid.appendChild(createWordCard(`${item.num}`, item.en, `Цифра ${item.num}`, 'bg-sky-50 border-sky-200', true));
+                });
+            }
+
+            wrapper.appendChild(grid);
+
+            // Кнопка переходу до наступного етапу
+            const nextBtnWrap = document.createElement('div');
+            nextBtnWrap.className = "mt-8";
+            nextBtnWrap.innerHTML = `
+                <button onclick="switchStage(2)" class="kid-btn bg-indigo-600 hover:bg-indigo-700 text-white border-4 border-indigo-700 px-8 py-3.5 rounded-3xl font-black text-lg sm:text-xl inline-flex items-center gap-2">
+                    <span>Перейти до гри: Правило I see / Have got</span> <span>➡️</span>
+                </button>
+            `;
+            wrapper.appendChild(nextBtnWrap);
+
+            container.appendChild(wrapper);
+        }
+
+        function createWordCard(visual, titleEn, subtitleUa, colorClasses, isNumber = false) {
+            const card = document.createElement('button');
+            card.className = `kid-btn ${colorClasses} border-4 rounded-3xl p-5 flex flex-col items-center justify-center text-center min-h-[155px] cursor-pointer relative group`;
+            
+            card.innerHTML = `
+                <span class="absolute top-3 right-3 text-sm opacity-60 group-hover:opacity-100">🔊</span>
+                <div class="${isNumber ? 'text-5xl font-black text-indigo-600' : 'text-5xl sm:text-6xl'} mb-2 transition-transform group-hover:scale-110">${visual}</div>
+                <div class="text-xl sm:text-2xl font-black text-slate-800">${titleEn}</div>
+                <div class="text-xs sm:text-sm font-bold text-slate-500 mt-0.5">${subtitleUa}</div>
+            `;
+
+            card.onclick = () => {
+                playGentleSound('tap');
+                speak(titleEn);
+            };
+            return card;
+        }
+
+        /* ==========================================================================
+           7. ЕТАП 2: ПРАВИЛО I SEE / HAVE GOT (Інтерактивна практика)
+           ========================================================================== */
+        function renderStage2(container) {
+            const task = state.stage2Tasks[state.stage2Index];
+            const progress = `${state.stage2Index + 1} / ${state.stage2Tasks.length}`;
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "w-full max-w-3xl bg-white rounded-3xl p-6 sm:p-8 shadow-lg border-4 border-indigo-100 pop-in text-center";
+
+            wrapper.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <span class="bg-indigo-100 text-indigo-700 px-4 py-1.5 rounded-full font-extrabold text-xs sm:text-sm">${task.badge}</span>
+                    <span class="font-black text-slate-400 text-sm">Завдання ${progress}</span>
+                </div>
+
+                <!-- Міні-шпаргалка правила -->
+                <div class="grid grid-cols-2 gap-3 bg-slate-50 p-3 rounded-2xl border border-slate-200 mb-5 text-left sm:text-center">
+                    <div onclick="speak('I see a yellow star')" class="cursor-pointer bg-white p-2.5 rounded-xl border border-indigo-100 hover:border-indigo-300">
+                        <span class="text-xs font-black uppercase text-indigo-500 block">Нове! (Я бачу...)</span>
+                        <span class="font-black text-base sm:text-lg text-slate-800">I see a... 👀 🔊</span>
+                    </div>
+                    <div onclick="speak('I have got a blue ball')" class="cursor-pointer bg-white p-2.5 rounded-xl border border-pink-100 hover:border-pink-300">
+                        <span class="text-xs font-black uppercase text-pink-500 block">Повторення (У мене є...)</span>
+                        <span class="font-black text-base sm:text-lg text-slate-800">I have got a... 🤲 🔊</span>
+                    </div>
+                </div>
+
+                <h2 class="text-xl sm:text-2xl font-black text-slate-800 mb-4">${task.promptUa}</h2>
+
+                <button onclick="speak('${task.speech}')" class="kid-btn pulse-guide bg-gradient-to-r from-indigo-500 to-purple-500 text-white border-4 border-indigo-600 px-8 py-3.5 rounded-3xl font-black text-xl sm:text-2xl mb-7 inline-flex items-center gap-3">
+                    <span>Listen / Repeat</span> <span>🔊</span>
+                </button>
+
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="stage2-options"></div>
+            `;
+
+            container.appendChild(wrapper);
+            const grid = wrapper.querySelector('#stage2-options');
+
+            task.options.forEach(opt => {
+                const card = document.createElement('button');
+                card.className = `kid-btn ${opt.swatch} border-4 rounded-3xl p-5 flex flex-col items-center justify-center min-h-[160px]`;
+                const emojis = Array(opt.count).fill(`<span class="text-5xl">${opt.emoji}</span>`).join('');
+
+                card.innerHTML = `
+                    <div class="flex flex-wrap justify-center gap-1 mb-2">${emojis}</div>
+                    <span class="font-black text-base sm:text-lg">${opt.label}</span>
+                `;
+
+                card.onclick = () => {
+                    if (opt.correct) {
+                        speak(task.speech);
+                        addStar(1);
+                        celebrate(false);
+                        showFeedback(true, `Yes! ${task.speech}`);
+
+                        setTimeout(() => {
+                            if (state.stage2Index + 1 < state.stage2Tasks.length) {
+                                state.stage2Index++;
+                                renderCurrentStage();
+                            } else {
+                                switchStage(3);
+                            }
+                        }, 1400);
+                    } else {
+                        playGentleSound('tryAgain');
+                        card.classList.add('wobble-hint');
+                        setTimeout(() => card.classList.remove('wobble-hint'), 500);
+                        showFeedback(false, "Try again! Listen carefully 🔊");
+                        speak(task.speech);
+                    }
+                };
+
+                grid.appendChild(card);
+            });
+
+            setTimeout(() => speak(task.speech), 350);
+        }
+
+        /* ==========================================================================
+           8. ЕТАП 3: КОЛЕСО СЛІВ 🎡 (Улюблена механіка зі скріншота!)
+           ========================================================================== */
+        function renderStage3Wheel(container) {
+            const wheelItems = [
+                { en: 'ball', emoji: '⚽', color: '#38BDF8' },
+                { en: 'car', emoji: '🚗', color: '#FB7185' },
+                { en: 'doll', emoji: '🪆', color: '#F472B6' },
+                { en: 'star', emoji: '⭐', color: '#FBBF24' },
+                { en: 'tree', emoji: '🌳', color: '#34D399' },
+                { en: 'sun', emoji: '☀️', color: '#FACC15' },
+                { en: 'fox', emoji: '🦊', color: '#FB923C' },
+                { en: 'bear', emoji: '🐻', color: '#D97706' }
+            ];
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "w-full max-w-3xl bg-white rounded-3xl p-6 sm:p-8 shadow-lg border-4 border-amber-200 pop-in text-center";
+
+            wrapper.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <span class="bg-amber-100 text-amber-800 px-4 py-1 rounded-full font-extrabold text-sm">Етап 3: Колесо слів 🎡</span>
+                    <span class="font-black text-amber-600 text-sm">Зіграно раундів: ${state.wheelSpinsDone} / 4</span>
+                </div>
+
+                <h2 class="text-2xl font-black text-slate-800 mb-1">Крути колесо і назви слово! 🎡</h2>
+                <p class="text-sm font-bold text-slate-500 mb-6">Натисни "Spin!", дочекайся зупинки та обери правильне слово</p>
+
+                <div class="flex flex-col md:flex-row items-center justify-center gap-8">
+                    <!-- Візуальне Колесо -->
+                    <div class="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center">
+                        <!-- Стрілочка зверху -->
+                        <div class="absolute -top-4 z-20 text-4xl drop-shadow-md">🔻</div>
+                        
+                        <!-- Диск колеса -->
+                        <div id="wheel-disc" style="transform: rotate(${state.wheelRotation}deg); transition: transform 2.5s cubic-bezier(0.17, 0.67, 0.12, 0.99);" 
+                             class="w-full h-full rounded-full border-8 border-indigo-500 shadow-xl relative overflow-hidden bg-gradient-to-tr from-amber-100 via-sky-100 to-pink-100">
+                            ${wheelItems.map((item, idx) => {
+                                const angle = idx * 45;
+                                return `
+                                    <div style="transform: rotate(${angle}deg);" class="absolute inset-0 flex justify-center pt-4">
+                                        <span class="text-3xl sm:text-4xl">${item.emoji}</span>
+                                    </div>
+                                `;
+                            }).join('')}
+                            <div class="absolute inset-0 m-auto w-16 h-16 bg-white rounded-full border-4 border-indigo-500 flex items-center justify-center shadow-inner font-black text-indigo-600 text-sm">
+                                SPIN
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Панель керування та вибору -->
+                    <div class="flex-1 w-full max-w-sm flex flex-col items-center">
+                        <button id="spin-btn" onclick="spinWheel()" class="kid-btn pulse-guide bg-gradient-to-r from-amber-400 to-orange-500 text-white border-4 border-orange-500 px-8 py-4 rounded-3xl font-black text-2xl mb-5 w-full">
+                            Крутити! 🎡
+                        </button>
+
+                        <div id="wheel-quiz-area" class="w-full">
+                            ${state.wheelTargetWord ? renderWheelOptionsHTML(state.wheelTargetWord, wheelItems) : `
+                                <div class="bg-slate-50 border-2 border-dashed border-slate-200 rounded-2xl p-6 text-slate-400 font-bold">
+                                    Натисни кнопку вище, щоб колесо обрало картинку! 👆
+                                </div>
+                            `}
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(wrapper);
+        }
+
+        function renderWheelOptionsHTML(targetItem, allItems) {
+            const distractors = shuffle(allItems.filter(i => i.en !== targetItem.en)).slice(0, 2);
+            const choices = shuffle([targetItem, ...distractors]);
+
+            return `
+                <div class="bg-indigo-50 border-2 border-indigo-200 rounded-3xl p-4 pop-in">
+                    <div class="text-5xl mb-2">${targetItem.emoji}</div>
+                    <p class="font-extrabold text-indigo-900 text-sm mb-3">Що випало на колесі? Натисни слово:</p>
+                    <div class="grid grid-cols-1 gap-2">
+                        ${choices.map(c => `
+                            <button onclick="checkWheelChoice('${c.en}', '${targetItem.en}', this)" class="kid-btn bg-white hover:bg-amber-50 border-2 border-indigo-200 py-2.5 px-4 rounded-2xl font-black text-xl text-slate-800 flex items-center justify-between">
+                                <span>${c.en}</span>
+                                <span class="text-sm text-slate-400">🔊</span>
+                            </button>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+        }
+
+        function spinWheel() {
+            if (state.isSpinning) return;
+            state.isSpinning = true;
+            playGentleSound('spin');
+
+            const wheelItems = [
+                { en: 'ball', emoji: '⚽' }, { en: 'car', emoji: '🚗' },
+                { en: 'doll', emoji: '🪆' }, { en: 'star', emoji: '⭐' },
+                { en: 'tree', emoji: '🌳' }, { en: 'sun', emoji: '☀️' },
+                { en: 'fox', emoji: '🦊' }, { en: 'bear', emoji: '🐻' }
+            ];
+
+            const chosenIndex = Math.floor(Math.random() * wheelItems.length);
+            const chosenItem = wheelItems[chosenIndex];
+
+            // Розраховуємо кут так, щоб обраний сектор зупинився точно під верхньою стрілочкою
+            const extraSpins = 360 * 4;
+            const targetAngle = 360 - (chosenIndex * 45);
+            state.wheelRotation = state.wheelRotation - (state.wheelRotation % 360) + extraSpins + targetAngle;
+
+            const disc = document.getElementById('wheel-disc');
+            if (disc) disc.style.transform = `rotate(${state.wheelRotation}deg)`;
+
+            setTimeout(() => {
+                state.isSpinning = false;
+                state.wheelTargetWord = chosenItem;
+                speak(`What is it?`);
+                renderCurrentStage();
+            }, 2600);
+        }
+
+        function checkWheelChoice(selectedEn, correctEn, btnEl) {
+            speak(selectedEn);
+            if (selectedEn === correctEn) {
+                addStar(1);
+                celebrate(false);
+                showFeedback(true, `Yes! It's a ${correctEn}!`);
+                state.wheelTargetWord = null;
+                state.wheelSpinsDone++;
+
+                setTimeout(() => {
+                    if (state.wheelSpinsDone >= 4) {
+                        switchStage(4);
+                    } else {
+                        renderCurrentStage();
+                    }
+                }, 1200);
+            } else {
+                playGentleSound('tryAgain');
+                btnEl.classList.add('wobble-hint');
+                setTimeout(() => btnEl.classList.remove('wobble-hint'), 500);
+                showFeedback(false, "Try again! Look at the picture 👀");
+            }
+        }
+
+        /* ==========================================================================
+           9. ЕТАП 4: СКЛАДИ РЕЧЕННЯ 🧩 ("I see..." та "I have got...")
+           ========================================================================== */
+        function renderStage4Builder(container) {
+            const task = state.stage4Tasks[state.stage4Index];
+            const progress = `${state.stage4Index + 1} / ${state.stage4Tasks.length}`;
+
+            if (!task.pool) {
+                task.pool = shuffle([...task.target, ...task.distractors]);
+            }
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "w-full max-w-2xl bg-white rounded-3xl p-6 sm:p-8 shadow-lg border-4 border-emerald-200 pop-in text-center";
+
+            wrapper.innerHTML = `
+                <div class="flex justify-between items-center mb-3">
+                    <span class="bg-emerald-100 text-emerald-700 px-4 py-1 rounded-full font-extrabold text-sm">Етап 4: Склади речення 🧩</span>
+                    <span class="font-black text-slate-400 text-sm">Речення ${progress}</span>
+                </div>
+
+                <h2 class="text-xl sm:text-2xl font-black text-slate-800 mb-2">Збери речення з кнопок-слів!</h2>
+                <p class="text-sm font-bold text-slate-500 mb-4">Натискай на слова по порядку та слухай вимову</p>
+
+                <!-- Картинка-підказка -->
+                <div class="inline-flex flex-col items-center justify-center ${task.swatch} border-4 rounded-3xl px-8 py-4 mb-5 shadow-sm">
+                    <span class="text-6xl mb-1">${task.emoji}</span>
+                    <button onclick="speak('${task.fullSpeech}')" class="mt-1 bg-white/90 hover:bg-white px-4 py-1.5 rounded-full text-xs font-black flex items-center gap-1.5 shadow-sm">
+                        <span>Послухати речення</span> <span>🔊</span>
+                    </button>
+                </div>
+
+                <!-- Слоти речення -->
+                <div class="bg-slate-50 border-4 border-dashed border-indigo-200 rounded-3xl p-4 min-h-[76px] flex flex-wrap items-center justify-center gap-2 mb-6" id="builder-slots"></div>
+
+                <!-- Кнопки слів -->
+                <div class="flex flex-wrap items-center justify-center gap-3" id="builder-bank"></div>
+            `;
+
+            container.appendChild(wrapper);
+
+            const slotsEl = wrapper.querySelector('#builder-slots');
+            const bankEl = wrapper.querySelector('#builder-bank');
+
+            task.target.forEach((w, idx) => {
+                const slot = document.createElement('div');
+                const filled = state.stage4BuiltWords[idx];
+                if (filled) {
+                    slot.className = "bg-indigo-600 text-white px-4 py-2 rounded-2xl font-black text-xl sm:text-2xl shadow-md pop-in";
+                    slot.textContent = filled;
+                } else {
+                    slot.className = "bg-white border-2 border-slate-300 text-slate-300 px-5 py-2 rounded-2xl font-black text-xl sm:text-2xl";
+                    slot.textContent = "?";
+                }
+                slotsEl.appendChild(slot);
+            });
+
+            task.pool.forEach(word => {
+                const btn = document.createElement('button');
+                const isUsed = state.stage4BuiltWords.includes(word);
+                btn.className = `kid-btn px-5 py-3 rounded-2xl font-black text-xl sm:text-2xl border-4 ${
+                    isUsed 
+                    ? 'bg-slate-100 text-slate-300 border-slate-200 opacity-40 pointer-events-none' 
+                    : 'bg-amber-100 hover:bg-amber-200 text-amber-900 border-amber-300'
+                }`;
+                btn.textContent = word;
+
+                btn.onclick = () => {
+                    const expected = task.target[state.stage4BuiltWords.length];
+                    speak(word);
+
+                    if (word === expected) {
+                        playGentleSound('tap');
+                        state.stage4BuiltWords.push(word);
+
+                        if (state.stage4BuiltWords.length === task.target.length) {
+                            renderCurrentStage();
+                            setTimeout(() => {
+                                speak(task.fullSpeech);
+                                addStar(2);
+                                celebrate(false);
+                                showFeedback(true, task.fullSpeech);
+                            }, 400);
+
+                            setTimeout(() => {
+                                state.stage4BuiltWords = [];
+                                if (state.stage4Index + 1 < state.stage4Tasks.length) {
+                                    state.stage4Index++;
+                                    renderCurrentStage();
+                                } else {
+                                    state.currentStage = 5;
+                                    renderCurrentStage();
+                                }
+                            }, 2200);
+                        } else {
+                            renderCurrentStage();
+                        }
+                    } else {
+                        playGentleSound('tryAgain');
+                        btn.classList.add('wobble-hint');
+                        setTimeout(() => btn.classList.remove('wobble-hint'), 500);
+                        showFeedback(false, `Try again! Next: "${expected}"`);
+                    }
+                };
+
+                bankEl.appendChild(btn);
+            });
+        }
+
+        /* ==========================================================================
+           10. ФІНАЛЬНИЙ ЕКРАН ПЕРЕМОГИ
+           ========================================================================== */
+        function renderVictory(container) {
+            celebrate(true);
+            setTimeout(() => speak("Awesome job! You are a Super English star!"), 400);
+
+            const wrapper = document.createElement('div');
+            wrapper.className = "w-full max-w-xl bg-white rounded-3xl p-8 sm:p-10 shadow-2xl border-4 border-amber-300 pop-in text-center";
+
+            wrapper.innerHTML = `
+                <div class="text-7xl sm:text-8xl mb-4 animate-bounce">🏆</div>
+                <h2 class="text-3xl sm:text-5xl font-black text-indigo-600 mb-3">
+                    Awesome job! 🌟
+                </h2>
+                <p class="text-lg font-bold text-slate-600 mb-6">
+                    Ти чудово повторила старі слова і вивчила нові!
+                </p>
+
+                <div class="bg-amber-100 border-4 border-amber-300 rounded-3xl py-4 px-8 inline-flex items-center gap-3 mb-8">
+                    <span class="text-4xl">⭐</span>
+                    <span class="text-4xl font-black text-amber-600">${state.stars}</span>
+                    <span class="text-lg font-extrabold text-amber-800">зірочок!</span>
+                </div>
+
+                <div>
+                    <button onclick="resetLesson()" class="kid-btn bg-emerald-500 hover:bg-emerald-600 text-white border-4 border-emerald-600 px-10 py-4 rounded-3xl font-black text-2xl inline-flex items-center gap-3">
+                        <span>Play again</span> <span>🔄</span>
+                    </button>
+                </div>
+            `;
+
+            container.appendChild(wrapper);
+        }
+
+        function resetLesson() {
+            playGentleSound('tap');
+            state.stars = 0;
+            document.getElementById('star-count').textContent = '0';
+            state.stage1SubTab = 'new';
+            state.stage2Index = 0;
+            state.wheelSpinsDone = 0;
+            state.wheelTargetWord = null;
+            state.stage4Index = 0;
+            state.stage4BuiltWords = [];
+            initTasks();
+            switchStage(1);
+        }
+
+        /* ==========================================================================
+           11. ЗАПУСК
+           ========================================================================== */
+        window.onload = function() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.getVoices();
+            }
+            initTasks();
+            updateNavUI();
+            renderCurrentStage();
+        };
+    </script>
+</body>
+</html>
